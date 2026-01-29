@@ -34,7 +34,6 @@ This project implements a complete NLP content management pipeline:
 1. **Clone the repository:**
 ```bash
 git clone https://github.com/Moostafaaa/Multilingual-Intelligent-Assistant-for-Content-Management.git
-cd your-repo-name
 
 ```
 
