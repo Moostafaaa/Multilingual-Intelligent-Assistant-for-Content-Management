@@ -1,20 +1,101 @@
-# Multilingual-Intelligent-Assistant-for-Content-Management
-Key Optimizations Explained
-Device Mapping: Using device=0 automatically moves the model to the NVIDIA GPU, significantly speeding up inference compared to CPU processing.
+# 🤖 Multilingual Intelligent Content Assistant
 
-Model Selection: I used DistilBERT and DistilBART. These are "student" models that retain ~95% of the performance of their larger counterparts (BERT/BART) while being much faster and lighter on VRAM.
+A high-performance, asynchronous FastAPI service that leverages **Hugging Face Transformers** to generate, summarize, translate, and perform question-answering on specific topics.
 
-Max New Tokens: Instead of using max_length, which includes the prompt, max_new_tokens ensures you get a consistent amount of generated text regardless of how long your input prompt is.
+## 🌟 Overview
 
-Pipeline Re-use: By wrapping these in a class, we load the heavy model weights into memory only once, rather than re-loading them for every request.
+This project implements a complete NLP content management pipeline:
 
-How these tasks connect
-The output of one stage serves as the input for the next, creating a linear "Chain of Thought" for the AI:
+1. **Content Generation:** Uses `GPT-2` to draft informative text based on a user-provided topic.
+2. **Summarization:** Utilizes `DistilBART` to condense the generated text into a concise summary.
+3. **Translation:** Employs a specialized English-to-Egyptian-Arabic translator (`NAMAA-Space`) to make the summary locally accessible.
+4. **Question Answering:** Uses `DistilBERT` to answer specific user questions based on the context of the generated content.
 
-Generation creates the raw knowledge base.
+## 🚀 Key Features
 
-Summarization extracts the core "thesis."
+* **Optimized Inference:** Automatic device detection (GPU/CUDA support).
+* **Modular Pipeline:** Uses Hugging Face's `pipeline` API for clean, maintainable code.
+* **Notebook Compatible:** Implements `nest_asyncio` and `threading` to run a live FastAPI server directly within Jupyter/Colab.
+* **Schema Validation:** Strong typing using Pydantic models for predictable API interactions.
 
-Translation makes that thesis globally accessible.
+---
 
-QA allows for deep-dive interaction with the original raw data.
+## 🛠️ Technical Stack
+
+* **Framework:** FastAPI
+* **Language:** Python 3.10+
+* **AI Engine:** Hugging Face Transformers (PyTorch)
+* **Server:** Uvicorn
+
+---
+
+## 📥 Installation & Setup
+
+1. **Clone the repository:**
+```bash
+git clone https://github.com/Moostafaaa/Multilingual-Intelligent-Assistant-for-Content-Management.git
+cd your-repo-name
+
+```
+
+
+2. **Install dependencies:**
+```bash
+pip install fastapi uvicorn transformers torch nest_asyncio requests
+
+```
+
+
+3. **Run the Notebook/Script:**
+If running in a local environment, you can start the server via terminal:
+```bash
+uvicorn main:app --reload
+
+```
+
+
+
+---
+
+## 📡 API Documentation
+
+### **Endpoint:** `POST /ai-assistant`
+
+**Request Body:**
+
+```json
+{
+  "topic": "Vitamins Importance",
+  "question": "How do Vitamins help health of people?"
+}
+
+```
+
+**Response Example:**
+
+```json
+{
+  "topic": "Vitamins Importance",
+  "generated_text": "Explain the impact of Vitamins Importance: Vitamins play a crucial role...",
+  "summary": "Vitamins are essential nutrients that support immune function...",
+  "translated_summary_ar": "الفيتامينات هي عناصر غذائية أساسية بتدعم وظائف المناعة...",
+  "question_answer": {
+    "question": "How do Vitamins help health of people?",
+    "answer": "support immune function"
+  }
+}
+
+```
+
+---
+
+## 🧠 Model Details
+
+| Task | Model Used |
+| --- | --- |
+| **Generation** | `gpt2` |
+| **Summarization** | `sshleifer/distilbart-cnn-6-6` |
+| **Translation** | `NAMAA-Space/masrawy-english-to-egyptian-arabic-translator-v2.9` |
+| **QA** | `distilbert-base-cased-distilled-squad` |
+
+---
